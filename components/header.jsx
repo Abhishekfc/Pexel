@@ -4,9 +4,18 @@ import Link from 'next/link';
 import Image from 'next/image'
 import React from 'react'
 import { usePathname } from 'next/navigation';
+import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from '@clerk/nextjs';
+import { Button } from "@/components/ui/button";
+import { useStoreUser } from '@/hooks/use-store-user';
+import { BarLoader } from 'react-spinners';
 
 const Header = () => {
   const path = usePathname();
+  const  {isLoading} = useStoreUser();
+
+  if(path.includes("/editor")){
+    return null; // hide  header on editor page
+  }
 
   return (
     <header className='fixed top-6 left-1/2 transform -translate-x-1/2 z-50 text-nowrap'>
@@ -43,9 +52,29 @@ const Header = () => {
 
         </div>}
 
-        <div className='flex items-center gap-3 ml-10 md:ml-20'>auth</div>
+        <div className='flex items-center gap-3 ml-10 md:ml-20'>
+          <SignedOut>
+              <SignInButton>
+                <Button variant="glass" className="hidden sm:flex">Sign In</Button>
+              </SignInButton>
+              <SignUpButton>
+                
+                <Button variant="primary">Get Started</Button>
+              </SignUpButton>
+            </SignedOut>
+            <SignedIn>
+              <UserButton 
+              appearance={{
+                elements:{
+                  avatarBox: "w-10 h-10",
+                }
+              }} 
+              />
+            </SignedIn>
+        </div>
 
-
+          {isLoading && <BarLoader/>}
+          
       </div>
     </header>
   )

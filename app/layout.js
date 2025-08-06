@@ -3,7 +3,12 @@ import "./globals.css";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner";
 import FloatingShapes from "@/components/floating-shapes";
-import Header from "@/components/header";
+import Header from "@/components/header";44
+import { ConvexClientProvider } from "./ConvexClientProvider";
+import { ClerkProvider } from "@clerk/nextjs";
+import { shadesOfPurple } from "@clerk/themes";
+
+
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,6 +29,13 @@ export default function RootLayout({ children }) {
           enableSystem
           disableTransitionOnChange
         >
+
+          <ClerkProvider appearance={{
+            baseTheme: shadesOfPurple,
+          }}>
+
+          <ConvexClientProvider>
+            {/* This is where Convex client is provided to the app */}
           <Header />
 
           <main className="bg-slate-900 min-h-screen text-white overflow-x-hidden">
@@ -31,6 +43,8 @@ export default function RootLayout({ children }) {
             <Toaster richColors />
             {children}</main>
 
+          </ ConvexClientProvider>
+          </ ClerkProvider>
         </ThemeProvider>
 
       </body>
