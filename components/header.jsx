@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { useStoreUser } from '@/hooks/use-store-user';
 import { BarLoader } from 'react-spinners';
 import { Authenticated, Unauthenticated } from 'convex/react';
+import { LayoutDashboardIcon } from 'lucide-react';
 
 const Header = () => {
   const path = usePathname();
@@ -64,6 +65,15 @@ const Header = () => {
               </SignUpButton>
             </Unauthenticated>
             <Authenticated>
+
+              <Link href="/dashboard">
+              <Button variant="glass">
+                <LayoutDashboardIcon className= "h-4 w-4" />
+                <span className='hidden sm:flex'>DashBoaard</span>
+              </Button>
+              
+              </Link>
+
               <UserButton 
               appearance={{
                 elements:{
