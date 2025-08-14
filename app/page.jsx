@@ -2,6 +2,8 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import HeroSection from "@/components/hero";
+import Features from "@/components/features";
+import Pricing from "@/components/pricing";
 
 export default function Home() {
   const stats = [
@@ -37,7 +39,9 @@ export default function Home() {
         </div>
       </section>
       {/* features   */}
+      <Features />
       {/* pricing */}
+      <Pricing />
 
       <section className="py-20 text-center">
         <div className="max-w-4xl mx-auto px-6">
