@@ -2,7 +2,7 @@
 
 import React, { use, useEffect, useState, useRef } from 'react'
 
-const useInterfaceObserver = (threshold = 0.1) => {
+const useIntersectionObserver = (threshold = 0.1) => {
     const [isVisible, setIsVisible] = useState(false);
     const ref = useRef();
 
@@ -19,4 +19,4 @@ const useInterfaceObserver = (threshold = 0.1) => {
     return [ref, isVisible];
 }
 
-export default useInterfaceObserver
+export default useIntersectionObserver

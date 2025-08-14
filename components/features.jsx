@@ -1,9 +1,9 @@
 "use client";
-import useInterfaceObserver from '@/hooks/use-intersection-observer';
+import useIntersectionObserver from '@/hooks/use-intersection-observer';
 import React, {useState} from 'react'
 
 const FeatureCard = ({icon, title, description, delay = 0}) => {
-    const [ref, isVisible] =  useInterfaceObserver();
+    const [ref, isVisible] = useIntersectionObserver();
     const [isHovered, setIsHovered] = useState(false);
   return <div ref = {ref} className={`backdrop-blur-lg bg-white/5 border border-white/10 rounded-2xl p-8 transition-all
   duration-700 cursor-pointer ${
@@ -14,7 +14,6 @@ const FeatureCard = ({icon, title, description, delay = 0}) => {
     onMouseEnter={() => setIsHovered(true)}
     onMouseLeave={() => setIsHovered(false)}
   >
-
 
     <div className="texr-4xl mb-4">{icon}</div>
     <h3 className='text-xl font-bold text-white mb-3'>{title}</h3>
