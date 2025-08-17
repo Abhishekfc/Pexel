@@ -6,6 +6,7 @@ import { useConvexQuery } from '@/hooks/use-convex-query';
 import { Plus, Sparkles } from 'lucide-react';
 import React, { use, useState } from 'react'
 import { BarLoader } from 'react-spinners';
+import NewProjectModal from './_components/new-project-modal';
 
 const Dashboard = () => {
 
@@ -28,7 +29,7 @@ const Dashboard = () => {
               Create and manage your AI- powered image designs
             </p>
           </div>
-          <Button onclick={() => setShowNewProjectModal(true)}
+          <Button onClick={() => setShowNewProjectModal(true)}
             variant="primary" size="lg" className="gap-2">
             <Plus className="h-5 w-5" />
             New Project
@@ -47,13 +48,16 @@ const Dashboard = () => {
             <p className='text-white/70 mb-8 max-w-md'>
             Upload an image to start editng with our powerful AI tools</p>
 
-            <Button onclick={() => setShowNewProjectModal(true)}
+            <Button onClick={() => setShowNewProjectModal(true)}
             variant="primary" size="xl" className="gap-2">
             <Sparkles className="h-5 w-5" />
             Start Creating
           </Button>
           </div>
         )}
+
+        <NewProjectModal isOpen={showNewProjectModal}
+        onClose={()=> setShowNewProjectModal(false)} />
 
 
       </div>
