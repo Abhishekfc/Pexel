@@ -6,6 +6,9 @@ import { api } from '@/convex/_generated/api';
 import { useConvexMutation, useConvexQuery } from '@/hooks/use-convex-query';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from '@/components/ui/button';
+import { useDropzone } from 'react-dropzone'
+import { Upload } from 'lucide-react';
+
 
 const NewProjectModal = ({ isOpen, onClose }) => {
     const [isUploading, setIsUploading] = useState(false);
@@ -23,8 +26,19 @@ const NewProjectModal = ({ isOpen, onClose }) => {
 
     const currentProjectCount = projects?.length || 0
     const canCreate = canCreateProject(currentProjectCount)
-    
-    const handleCreateProject = () => {};
+
+    const onDrop = () => { }
+
+    const { getRootProps, getInputProps, isDragActive } = useDropzone({
+        onDrop,
+        accept: {
+            "image/*": [".png", ".jpg", ".jpeg", ".webp", ".gif"],
+        },
+        maxFiles: 1,
+        maxSize: 20 * 1024 * 1024, //20mb limit
+    })
+
+    const handleCreateProject = () => { };
 
 
 
@@ -46,37 +60,54 @@ const NewProjectModal = ({ isOpen, onClose }) => {
 
                     </DialogHeader>
 
-
-                    {isFree && currentProjectCount >= 2 && (
-
-
-                        <div className='space-y-6'>
-                            <Alert className="bg-amber-500/10 border-amber-500/20" >
+                    <div className="space-y-6">
+                        {/* Project Limit Warning for Free Users */}
+                        {isFree && currentProjectCount >= 2 && (
+                            <Alert className="bg-amber-500/10 border-amber-500/20">
                                 <Crown className="h-5 w-5 text-amber-400" />
-
                                 <AlertDescription className="text-amber-300/80">
-                                    <div className='font-semibold text-amber-400 mb-1'>
+                                    <div className="font-semibold text-amber-400 mb-1">
                                         {currentProjectCount === 2
-                                            ? "last Free Project"
-                                            : "Projwct limit reached"
-                                        }
-
-                                        {currentProjectCount === 2
-                                            ? "This will be your last free Project. Upgrade to Pexel Pro for unlimited projects."
-                                            : "Free plan is limited to 3 projects. upgrade to Pexel Pro to create more projects."
-                                        }
-
-                                        {/* Upload Area */}
-
+                                            ? "Last Free Project"
+                                            : "Project Limit Reached"}
                                     </div>
+                                    {currentProjectCount === 2
+                                        ? "This will be your last free project. Upgrade to Pexel Pro for unlimited projects."
+                                        : "Free plan is limited to 3 projects. Upgrade to Pexel Pro to create more projects."}
                                 </AlertDescription>
                             </Alert>
-                        </div>
-
-                    )}
+                        )}
 
 
-                    <DialogFooter>
+                        {/* Upload Area */}
+                        {!selectedFile ? (<div {...getRootProps()}>
+                            <input {...getInputProps()} />
+                            <Upload className="h-12 w-12 text-white/50 mx-auto mb-4" />
+
+                           <h3 className='text-xl font-semibold text-white mb-2'>
+                            {isDragActive ? "Drop your image here" : "Upload an image"}
+                           </h3>
+
+                            <p className='text-white/70 mb-4 '>
+                                {canCreate
+                                    ? "Drag and drop your image, or click to browse"
+                                    : "Upgrade to Pro to create more projects"
+                                }
+                            </p>
+
+
+                        </div>) : (
+
+                            <div></div>
+                        )
+                    }
+
+                    </div>
+
+
+
+
+                    <DialogFooter className={"gap-3"}>
                         <Button
                             variant="ghost"
                             onClick={handleClose}
@@ -90,16 +121,16 @@ const NewProjectModal = ({ isOpen, onClose }) => {
                             disabled={!selectedFile || !projectTitle.trim() || isUploading}
                             variant="primary">
 
-                                {isUploading  ? (
-                                    <>
-                                    <Loader2 className =" h-4 w-4 animate-spin  "/>
+                            {isUploading ? (
+                                <>
+                                    <Loader2 className=" h-4 w-4 animate-spin  " />
                                     Creating...
-                                    </>
-                                ) : (
-                                    "Create Project"
-                                )
+                                </>
+                            ) : (
+                                "Create Project"
+                            )
 
-                                }
+                            }
 
                         </Button>
                     </DialogFooter>
