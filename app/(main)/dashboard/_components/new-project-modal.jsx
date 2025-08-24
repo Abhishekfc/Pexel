@@ -7,7 +7,10 @@ import { useConvexMutation, useConvexQuery } from '@/hooks/use-convex-query';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from '@/components/ui/button';
 import { useDropzone } from 'react-dropzone'
-import { Upload } from 'lucide-react';
+import { ImageIcon, Upload, X } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { toast } from 'sonner';
 
 
 const NewProjectModal = ({ isOpen, onClose }) => {
@@ -15,8 +18,13 @@ const NewProjectModal = ({ isOpen, onClose }) => {
     const [projectTitle, setProjectTitle] = useState("");
     const [selectedFile, setSelectedFile] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
+    const [showUpgradeModal, setShowUpgradeModal] = useState(null);
 
     const handleClose = () => {
+        setSelectedFile(null);
+        setPreviewUrl(null);
+        setProjectTitle("");
+        setIsUploading(false);   
         onClose();
     }
 
@@ -27,7 +35,17 @@ const NewProjectModal = ({ isOpen, onClose }) => {
     const currentProjectCount = projects?.length || 0
     const canCreate = canCreateProject(currentProjectCount)
 
-    const onDrop = () => { }
+    const onDrop = (acceptedFiles) => {
+        const file = acceptedFiles[0];
+
+        if(file){
+            setSelectedFile(file);
+            setPreviewUrl(URL.createObjectURL(file))
+
+            const nameWithoutExt = file.name.replace(/\.[^/.]+$/, "")
+            setProjectTitle(nameWithoutExt || "Untitled Project")
+        }
+     }
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         onDrop,
@@ -38,7 +56,27 @@ const NewProjectModal = ({ isOpen, onClose }) => {
         maxSize: 20 * 1024 * 1024, //20mb limit
     })
 
-    const handleCreateProject = () => { };
+    const handleCreateProject = async () => {
+        if(!canCreate){
+            setShowUpgradeModal(true);
+            return;
+        }
+
+        if(!selectedFile || projectTitle.trim() ){
+            toast.error("Please select an image and enter a project title");
+            return;
+        }
+
+        setIsUploading(true)
+
+        try {
+            const formData = new FormData();
+            formData.append("file", selectedFile);
+            formData.append("filename", selectedFile.name)
+        } catch (error) {
+            
+        }
+     };
 
 
 
@@ -80,7 +118,14 @@ const NewProjectModal = ({ isOpen, onClose }) => {
 
 
                         {/* Upload Area */}
-                        {!selectedFile ? (<div {...getRootProps()}>
+                        {!selectedFile ? (<div {...getRootProps()} 
+                        className={`border-2 border-dashed rounded-xl p-12 text-center cursor-pointer transition-all
+                                ${
+                                    isDragActive
+                                    ?"border-cyan-400 bg-cyan-400/5"
+                                    :"border-white/20 hover:border-white/40"
+                                }   ${!canCreate ? "opacity-50 pointer-events-none" : ""} `}>
+                                
                             <input {...getInputProps()} />
                             <Upload className="h-12 w-12 text-white/50 mx-auto mb-4" />
 
@@ -93,12 +138,70 @@ const NewProjectModal = ({ isOpen, onClose }) => {
                                     ? "Drag and drop your image, or click to browse"
                                     : "Upgrade to Pro to create more projects"
                                 }
+                            </p>{" "}
+                            <p className='text-sm text-white/50'>
+                                Support PNG, JPG, WEBP  up to 20MB
                             </p>
 
 
                         </div>) : (
 
-                            <div></div>
+                            <div className='space-y-6'>
+                                <div className='relative'>
+                                    <img 
+                                    src={previewUrl}
+                                    alt="Preview"
+                                    className='w-full h-64 object-cover rounded-xl border border-white/10' />
+
+                                    <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => {
+                                        setSelectedFile(null);
+                                        setPreviewUrl(null);
+                                        setProjectTitle("");
+                                    }}
+
+                                    className="absolute top-2 right-2 bg-black/50 hover:bg-black/70 text-white"
+                                    >
+                                        <X className="h-4 w-4"/>
+                                    </Button>
+                                </div>
+
+                                <div className='space-y-2'>
+                                    <Label htmlFor="project-title" className="text-white">
+                                        Project Title
+                                    </Label>
+
+                                    <Input
+                                        id="project-title"
+                                        type="text"
+                                        value={projectTitle}
+                                        onChange={(e) => setProjectTitle(e.target.value)}
+                                        placeholder="Enter project name..."
+                                        className="bg-slate-700 border-white/20 text-white placeholder-white/50
+                                        focus:border-cyan-400 focus:ring-cyan-400"
+
+                                    />
+                                </div>
+
+                                <div className='bg-slate-700/50 rounded-lg p-4'>
+                                <div className='flex items-center gap-3 '>
+                                    <ImageIcon className="h-5 w-5 text-cyan-400"/>
+                                    <div>
+                                        <p className='text-white font-medium '>
+                                            {selectedFile.name}
+                                        </p>
+
+                                        <p className='text-white/70 text-sm'>
+                                            {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                                        </p>
+                                    </div>
+                                    </div> 
+
+                                </div>
+
+                            </div>
                         )
                     }
 
